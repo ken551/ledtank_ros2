@@ -46,4 +46,5 @@ void MotorDriver::changeMotorValue(const ledtank_ros2_driver_msg::msg::MotorValu
 
 
 // 動的にコンポーネントノードをロードできるために登録する
-//RCLCPP_COMPONENTS_REGISTER_NODE(ledtank_motor_driver::MotorDriver);
+#include "rclcpp_components/register_node_macro.hpp"
+RCLCPP_COMPONENTS_REGISTER_NODE(ledtank_motor_driver::MotorDriver);
