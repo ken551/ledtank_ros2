@@ -36,7 +36,7 @@ rclcpp_components_register_nodes(motor_driver_component "ledtank_ros2_driver::Mo
 ament_export_dependencies(ament_cmake)
 ament_export_dependencies(rclcpp)
 ament_export_dependencies(rclcpp_components)
-ament_export_dependencies(greeting_msg)
+ament_export_dependencies(ledtank_ros2_driver_msg)
 
 ament_export_include_directories(include)
 
