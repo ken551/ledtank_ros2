@@ -23,13 +23,14 @@ find_package(ledtank_ros2_driver_msg REQUIRED)
 
 include_directories(include)
 
+find_library(wiringPi_LIB wiringPi)
 add_library(motor_driver_component SHARED src/motor_driver_component.cpp)
+target_compile_definitions(motor_driver_component PRIVATE "MOTOR_DRIVER_BUILDING_DLL")
 ament_target_dependencies(motor_driver_component
   rclcpp
   rclcpp_components
   ledtank_ros2_driver_msg
   )
-find_library(wiringPi_LIB wiringPi)
 target_link_libraries(motor_driver_component ${wiringPi_LIB})
 rclcpp_components_register_nodes(motor_driver_component "ledtank_ros2_driver::MotorDriver")
 
@@ -43,9 +44,12 @@ ament_export_include_directories(include)
 ament_export_libraries(motor_driver_component)
 
 add_executable(motor_driver src/motor_driver.cpp)
-ament_target_dependencies(motor_driver rclcpp ledtank_ros2_driver_msg)
-
-target_link_libraries(motor_driver motor_driver_component)
+ament_target_dependencies(motor_driver 
+	rclcpp 
+	ledtank_ros2_driver_msg
+	rclcpp_components	
+)
+target_link_libraries(motor_driver motor_driver_component ${wiringPi_LIB})
 
 install(DIRECTORY
   include/ledtank_ros2_driver

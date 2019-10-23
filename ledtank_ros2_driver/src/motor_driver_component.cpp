@@ -20,6 +20,8 @@ MotorDriver::MotorDriver(const rclcpp::NodeOptions & options)
     wiringPiSetupGpio();
     softPwmCreate(13,0,100);
     softPwmCreate(19,0,100);
+    softPwmCreate(5,0,100);
+    softPwmCreate(6,0,100);
  	sub_ = this->create_subscription<ledtank_ros2_driver_msg::msg::MotorValue>(
     "ledtank_motor_value", 10, std::bind(&MotorDriver::changeMotorValue, this, _1));
 }
@@ -27,18 +29,32 @@ MotorDriver::MotorDriver(const rclcpp::NodeOptions & options)
 void MotorDriver::changeMotorValue(const ledtank_ros2_driver_msg::msg::MotorValue::SharedPtr msg)
 {
 	RCLCPP_INFO(this->get_logger(), "Change Motor Value");
-	float duty = msg->left_value;
-	if(duty >= 100) {
-		duty = 100;
-	} else if(duty <= -100) {
-		duty = -100;
+	int rightDuty = msg->right_value;
+	int leftDuty = msg->left_value;
+
+	if(rightDuty >= 100) {
+		rightDuty = 100;
+	} else if(rightDuty <= -100) {
+		rightDuty = -100;
 	}
-	if (duty>= 0) {
-		softPwmWrite(13,duty);
+	if(leftDuty >= 100) {
+		leftDuty = 100;
+	} else if(leftDuty <= -100) {
+		leftDuty = -100;
+	}
+	if (leftDuty>= 0) {
+		softPwmWrite(13,leftDuty);
 		softPwmWrite(19,0);
 	} else {
 		softPwmWrite(13,0);
-		softPwmWrite(19,-duty);
+		softPwmWrite(19,-leftDuty);
+	}
+	if (rightDuty>= 0) {
+		softPwmWrite(5,rightDuty);
+		softPwmWrite(6,0);
+	} else {
+		softPwmWrite(5,0);
+		softPwmWrite(6,-rightDuty);
 	}
 }
 
