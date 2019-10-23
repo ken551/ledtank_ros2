@@ -13,21 +13,47 @@
 # limitations under the License.
  
 import rclpy
-from rclpy import Node
+from rclpy.node import Node
 from ledtank_ros2_driver_msg.msg import MotorValue
 from std_msgs.msg import String
 from sensor_msgs.msg import Joy
 import sys, select, termios, tty
 
-def JoyListener(Node):
+class JoyListener(Node):
+
     def __init__(self):
         super().__init__("teleop_joystick")
+        self.pub = self.create_publisher(MotorValue, "ledtank_motor_value")
         self.create_subscription(Joy,"joy",self.callback)
-    
+        self.old_left = 0
+        self.old_right = 0
+
     def callback(self,msg):
-        print(msg.axes[0])
+        print("hoge")
+        left=int(msg.axes[1]*100)
+        left=self.shapeValue(left)
+        right=int(msg.axes[2]*100)
+        right=self.shapeValue(right)
+        if self.old_left != left or self.old_right != right :
+            msg = MotorValue()
+            msg.left_value = left
+            msg.right_value = right
+            self.pub.publish(msg)
+            self.old_left = left
+            self.old_right = right
+        print(left)
+        print("piko")
+        print(right)
+
+    def shapeValue(self,value):
+        if value > 100:
+            return 100
+        if value < -100:
+            return -100
+        else:
+            return value
  
-def main(args=None):
+def main():
     rclpy.init()
     node = JoyListener()
     rclpy.spin(node)

@@ -6,6 +6,7 @@ setup(
     packages=[],
     py_modules=[
         'teleop_keyboard',
+        'teleop_joystick'
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -26,6 +27,7 @@ setup(
     entry_points={
         'console_scripts': [
             'teleop_keyboard = teleop_keyboard:main',
+            'teleop_joystick = teleop_joystick:main'
         ],
     },
 )
